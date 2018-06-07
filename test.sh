@@ -3,19 +3,19 @@
 # software stack under SGE.
 # 1. Force bash as the executing shell.
 $ -S /bin/bash
-# 2. Request ten minutes of wallclock time (format hours:minutes:seconds).
+# 2. Request one minute of wallclock time (format hours:minutes:seconds).
 $ -l h_rt=0:1:0
-# 3. Request 1 gigabyte of RAM 
-$ -l mem=1G
-# 4. Request 15 gigabyte of TMPDIR space (default is 10 GB)
-$ -l tmpfs=1G
+# 3. Request 256 mb of RAM
+$ -l mem=256M
+# 4. Request 256 mb of TMPDIR space (default is 10 GB)
+$ -l tmpfs=256M
 # 5. Set the name of the job.
 $ -N Heidi_Test
 # 6. Set the working directory to somewhere in your scratch space.  This is
 # a necessary step with the upgraded software stack as compute nodes cannot
 # write to $HOME.
 # Replace "<your_UCL_id>" with your UCL user ID :)
-$ -wd /home/uceshhu/Scratch/output
+$ -wd /home/uceshhu/Scratch/
 # 7. Your work *must* be done in $TMPDIR 
 cd $TMPDIR
 # 8. Run the application.
