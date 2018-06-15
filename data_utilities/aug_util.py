@@ -181,6 +181,6 @@ def draw_bboxes(img,boxes):
     for b in boxes:
         xmin,ymin,xmax,ymax = b
         
-        for j in range(3):
-            draw.rectangle(((xmin+j, ymin+j), (xmax+j, ymax+j)), outline="red")
+        for j in range(3): #originally range 3
+            draw.rectangle(((xmin-j, ymin-j), (xmax+j, ymax+j)), outline='#49b8a8') #note: original color was red
     return source

@@ -5,9 +5,9 @@ import json
 import math
 
 '''
-Helper function to read in xView dataset geojson label file and 
-extract only objects of interest (e.g. with specific type id).
-Writes resultant geojson to new file
+Helper functions to read in xView dataset geojson label file and 
+process appropriately, including extracting just one type of object
+and downsampling the bounding boxes for objects.
 '''
 
 def parsetype(input_json="../data/xView_train.geojson", 
@@ -32,7 +32,7 @@ def parsetype(input_json="../data/xView_train.geojson",
 	    output_dict = json.load(f)
 
 	# Filter python objects with list comprehensions
-	output_dict['features'] = [x for x in data['features'] if x['properties']['type_id'] == type_id]
+	output_dict['features'] = [x for x in output_dict['features'] if x['properties']['type_id'] == type_id]
 
 	# Transform python object back into json
 	output_json = json.dumps(output_dict)
