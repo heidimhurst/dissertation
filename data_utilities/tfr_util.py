@@ -15,7 +15,7 @@
 # ==============================================================================
 
 from PIL import Image
-#import tensorflow as tf
+import tensorflow as tf
 import io
 import numpy as np
 
