@@ -57,6 +57,9 @@ def parse_coords(image_path):
             coord = [float(x) for x in info.split(",")]
             coord_list.append(coord)
 
+    # swap third and fourth entries to enumerate in reasonable order
+    coord_list[3], coord_list[4] = coord_list[4], coord_list[3]
+
     # parse list of cords to string
     out_coords = ""
     for coords in coord_list:
