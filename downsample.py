@@ -29,6 +29,37 @@ def check_resample_method(string):
 
     return string
 
+def get_imsize(image_path):
+    """
+    Gets the x dimension of an image.  Varies based on version of GDAL available.
+
+    Args:
+        image path: path to single image of interest
+
+    Returns:
+        size: int, in pixels of the x direction size of the image
+    """
+
+    # determine version
+    gdal_version = check_output(['gdalinfo','--version'])
+
+    # if 2.0 or higher
+    if " 2." in gdal_version:
+        size = json.loads(check_output(["gdalinfo","-json", image_path]))['size'][0]
+    # if under 2.0
+    elif " 1." in gdal_version:
+        # get result as string
+        command = 'gdalinfo ' + image_path + ' | grep "Size is"'
+        size_string = check_output([command], shell=True)
+        # cut after comma
+        size_string = size_string[:size_string.index(',')]
+        # cut to last 
+        size_string = size_string[size_string.rfind(" ")+1:]
+
+        size = int(size_string)
+
+    return size
+
 def downsample_image(image_path, downsample_factor=2.0, resample_method='lanczos', 
                      output_location=os.path.join(os.getcwd(),'downsampled')):
     """
@@ -44,7 +75,7 @@ def downsample_image(image_path, downsample_factor=2.0, resample_method='lanczos
     """
 
     # get image size from gdalinfo
-    size = json.loads(check_output(["gdalinfo","-json", image_path]))['size'][0]
+    size = get_imsize(image_path)
     size = math.ceil(size/float(downsample_factor))
     # call gdalwarp to create new image
     image_name = os.path.basename(image_path)

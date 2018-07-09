@@ -18,7 +18,7 @@ limitations under the License.
 from subprocess import check_output
 import json, os, argparse
 
-def parse_coords(coord_list):
+def parse_coords(image_path):
     """
     Correctly formats coordinates list for use in gml string, including
     ensuring that it is closed (e.g. first coordinate is the same as last coordinate)
@@ -30,12 +30,41 @@ def parse_coords(coord_list):
     Output:
         returns formmated string
     """
+
+    # determine version of gdal
+    gdal_version = check_output(['gdalinfo','--version'])
+
+    # if 2.0 or higher, parse json
+    if " 2." in gdal_version:
+        # get gdal data
+        tiff_info = json.loads(check_output(["gdalinfo","-json", image_path]))
+        coord_list = tiff_info['wgs84Extent']['coordinates'][0]
+
+    # if under 2.0, no json to parse
+    elif " 1." in gdal_version:
+        # get gdal data as big gross string and turn into list of floats
+        tiff_info = check_output(['gdalinfo '+image_path], shell=True)
+    
+        # get coordinate section
+        tiff_info = tiff_info[:tiff_info.index('Center')]
+        
+        coord_list = []
+        # get first coordinate set, then cut string
+        for location in ["Upper Left", "Lower Left", "Upper Right", "Lower Right"]:
+            info = tiff_info[tiff_info.index(location):]
+            info = info[info.index('(')+1:info.index(')')]
+            # split coordinates and make floats
+            coord = [float(x) for x in info.split(",")]
+            coord_list.append(coord)
+
+    # parse list of cords to string
     out_coords = ""
     for coords in coord_list:
         out_coords += str(coords[0]) + "," + str(coords[1]) + " "
     out_coords += str(coord_list[0][0]) + "," + str(coord_list[0][1])
-    
+
     return out_coords
+
 
 def create_gml(data_location='', outfilename='photo_bounds'):
     """
@@ -50,8 +79,6 @@ def create_gml(data_location='', outfilename='photo_bounds'):
     gml_middle = ""
     for filename in os.listdir(data_location):
         if filename.endswith(".tif"):
-            # get gdal data
-            tiff_info = json.loads(check_output(["gdalinfo","-json", data_location+filename]))
             # get just file name
             image_name = os.path.splitext(filename)[0]
             
@@ -60,7 +87,7 @@ def create_gml(data_location='', outfilename='photo_bounds'):
             gml_middle += '<ogr:geometryProperty> <gml:Polygon srsName="EPSG:4326"> <gml:outerBoundaryIs> <gml:LinearRing> <gml:coordinates>'
             
             # add coordinate info
-            gml_middle += parse_coords(tiff_info['wgs84Extent']['coordinates'][0])
+            gml_middle += parse_coords(os.path.join(data_location,filename))
             
             # close polygon
             gml_middle += "</gml:coordinates> </gml:LinearRing> </gml:outerBoundaryIs> </gml:Polygon> </ogr:geometryProperty> "
