@@ -12,6 +12,22 @@ process appropriately, including extracting just one type of object
 and downsampling the bounding boxes for objects.
 '''
 
+def clean_types(input_dict):
+    """
+    Sets all type_ids to 1, for simplicity.  Do not use with multiple type IDs!
+
+    Args:
+        input_dict: dictionary of geojson content in xView schema
+
+    Output:
+        returns dictionary
+    """
+
+    for item in input_dict['features']:
+        item['properties']['type_id'] = 1
+
+    return input_dict
+
 def parsetype_dict(input_dict, type_id=[18]):
     """
     Extracts features with specific type ids from dictionary.
@@ -129,6 +145,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--scale_factor", type=int, help="Factor by which JSON should be reduced in each direction")
     parser.add_argument("-o","--output", default="modified_bounds.geojson", help="Filepath of desired output")
     parser.add_argument("-t","--type_id", nargs='+', type=int, help="List of type ids to be selected")
+    parser.add_argument("-c","--clean_types", action='store_true', help="Set all type ids to 1")
     
     args = parser.parse_args()
 
@@ -139,6 +156,11 @@ if __name__ == "__main__":
     # filter if required
     if args.type_id:
         output_dict = parsetype_dict(output_dict, args.type_id)
+
+    # set all type values to 1 if required
+    if args.clean_types:
+        print "WARNING: Removing all type ids, setting type to 1"
+        output_dict = clean_types(output_dict)
 
     # downsample if required
     if args.scale_factor:
