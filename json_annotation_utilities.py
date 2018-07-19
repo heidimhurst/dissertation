@@ -77,7 +77,7 @@ def parsetype(input_json="../data/xView_train.geojson",
         json.dump(output_dict, outfile)
 
 
-def downsample_bbox_dict(input_dict, scale_factor=2):
+def downsample_bbox_dict(input_dict, scale_factor=2.0):
     """
     Performs downsampling functionality for geojson format.  
 
@@ -110,7 +110,7 @@ def downsample_bbox_dict(input_dict, scale_factor=2):
 
 def downsample_bbox(input_json="../data/xView_train.geojson", 
                       output_file='output_json_test.geojson', 
-                      scale_factor=2):
+                      scale_factor=2.0):
     """
     Downsamples the bounding boxes present in training geojson file to match downsampled image. 
     Saves as new geojson.
@@ -142,7 +142,7 @@ def downsample_bbox(input_json="../data/xView_train.geojson",
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to original json")
-    parser.add_argument("-s", "--scale_factor", type=int, help="Factor by which JSON should be reduced in each direction")
+    parser.add_argument("-s", "--scale_factor", type=float, help="Factor by which JSON should be reduced in each direction")
     parser.add_argument("-o","--output", default="modified_bounds.geojson", help="Filepath of desired output")
     parser.add_argument("-t","--type_id", nargs='+', type=int, help="List of type ids to be selected")
     parser.add_argument("-c","--clean_types", action='store_true', help="Set all type ids to 1")
