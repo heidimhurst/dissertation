@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # loop over desired training sets
-declare -a sf=("3")
+# declare -a sf=("3")
 
 # initialize required variables
 trial=t7
@@ -31,8 +31,8 @@ for i in ${sf[@]}; do
 	screen_name=${trial}_eval_${factor}
 
 	# create eval command 
-	eval_command="cd ${models_research_path} \
-	export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim \
+	eval_command="cd ${models_research_path} && \
+	export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim && \
 	CUDA_VISIBLE_DEVICES='2' python object_detection/eval.py \
 	--logtostderr \
 	--pipeline_config_path=${config_path} \
