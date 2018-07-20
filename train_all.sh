@@ -18,7 +18,7 @@ model_name=/ssd_inception
 
 # scale factors of interest
 # declare -a sf=("1.5" "2.5" "3" "3.5")
-declare -a sf=("3")
+declare -a sf=("1.5" "2.5" "3")
 
 # loop through each of these and train/eval
 for i in ${sf[@]}; do
