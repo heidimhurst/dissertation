@@ -31,16 +31,19 @@ for i in ${sf[@]}; do
 	project_data_path=${project_path}/data/${object_type}/${factor}
 
 	screen_name=${trial}_eval_${factor}
+	
+	# initialize screen
+	screen -L -d -m  -S ${screen_name}
 
 	# create eval command 
-	eval_command="cd ${models_research_path} && export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim && CUDA_VISIBLE_DEVICES='2' python object_detection/eval.py \
+	eval_command="cd ${models_research_path} && export PYTHONPATH=$PYTHONPATH:${models_research_path}:${models_research_path}/slim && CUDA_VISIBLE_DEVICES='2' python object_detection/eval.py \
 	--logtostderr \
 	--pipeline_config_path=${config_path} \
 	--checkpoint_dir=${project_path}/models${model_name}/${object_type}/${factor}/train \
 	--eval_dir=${project_path}/models${model_name}/${object_type}/${factor}/eval"
 
 	# start evaluation in a different screen
-	screen -L -d -m -S screen_name -X stuff "${eval_command}"$(echo -ne '\015')
+	screen -S $screen_name -X stuff "${eval_command}"$(echo -ne '\015')
 
 	# move to requisite folder
 	cd ${models_research_path}
