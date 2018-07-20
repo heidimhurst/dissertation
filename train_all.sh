@@ -16,6 +16,8 @@ personal_util_path=${base_path}/personal_codebase/dissertation
 xview_util_path=${base_path}/xview_codebase/data_utilities
 model_name=/ssd_inception
 
+models_research_path=${base_path}/tf_api_codebase/models/research
+
 # scale factors of interest
 # declare -a sf=("1.5" "2.5" "3" "3.5")
 declare -a sf=("1.5" "2.5" "3")
