@@ -25,6 +25,7 @@ for i in ${sf[@]}; do
 	factor=$i
 	config_name=${prefix}_${trial}_${factor}.config
 	config_path=${project_path}/models${model_name}/${config_name}
+	project_data_path=${project_path}/data/${object_type}/${factor}
 	# let user know what's up
 	echo ----------- Creating images for downsample factor $i -----------
 	# create folder for downsampled images
@@ -39,7 +40,7 @@ for i in ${sf[@]}; do
 	interim_path=${project_path}/models${model_name}/${object_type}/${factor}
 	mkdir ${interim_path}
 	mkdir ${interim_path}/eval ${interim_path}/train
-	mkdir ${project_path}/data/${object_type}/${factor}
+	mkdir $project_data_path
 	# create JSON file
 	echo ----------- Creating JSON file for downsample factor $i -----------
 	python ${personal_util_path}/json_annotation_utilities.py \
@@ -60,7 +61,6 @@ for i in ${sf[@]}; do
 	# create tfrecord files
 	echo ----------- Creating tfrecord files for factor $i ----------- 
 	# pipe output to a file for processing
-	project_data_path=${project_path}/data/${object_type}/${factor}
 	# make sure you're in teh correct directory
 	cd ${project_data_path}
 	# create tfrecord file and pipe input to save for later processing
