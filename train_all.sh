@@ -31,9 +31,7 @@ for i in ${sf[@]}; do
 	screen_name=${trial}_eval_${factor}
 
 	# create eval command 
-	eval_command="cd ${models_research_path} && \
-	export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim && \
-	CUDA_VISIBLE_DEVICES='2' python object_detection/eval.py \
+	eval_command="cd ${models_research_path} && export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim && CUDA_VISIBLE_DEVICES='2' python object_detection/eval.py \
 	--logtostderr \
 	--pipeline_config_path=${config_path} \
 	--checkpoint_dir=${project_path}/models${model_name}/${object_type}/${factor}/train \
