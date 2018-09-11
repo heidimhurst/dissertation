@@ -88,6 +88,7 @@ if __name__ == "__main__":
     parser.add_argument("-o","--output_location",default=os.path.join(os.getcwd(),"downsampled"),help="Filepath of desired output directory")
     parser.add_argument("-r","--resample_method",default="near",type=check_resample_method, help="GDAL approved resampling method (see current gdal version for more info)")
     parser.add_argument("-s","--scale_factor",default=2.0,type=float, help="Downsample scale factor (values > 1 will SHRINK image)")
+    parser.add_argument("-u","--upsample",action="store_true", help="If flag -u is used, inverts scale factor (values > 1 will GROW image)")
     args = parser.parse_args()
 
     # create output directory, if it doesn't yet exist
@@ -101,10 +102,18 @@ if __name__ == "__main__":
         os.makedirs(output_location)
         print "Saving to " + args.output_location
 
+    # specify what scale factor is used
+    if args.upsample:
+        scale_factor = 1.0/args.scale_factor
+        print "Upsampling - scale factor set to {}".format(scale_factor)
+    else:
+        scale_factor = args.scale_factor
+        print "Downsampling - scale factor set to {}".format(scale_factor)
+
     # look through all files and downsample
     for file in os.listdir(args.input):
         if file.endswith(".tif"):
-            downsample_image(os.path.join(args.input, file), args.scale_factor, 
+            downsample_image(os.path.join(args.input, file), scale_factor, 
                              args.resample_method, args.output_location)
             print "Downsampled image "+file
 

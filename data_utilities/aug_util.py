@@ -17,9 +17,14 @@ limitations under the License.
 
 import numpy as np
 from PIL import Image
-#import tensorflow as tf
+# import tensorflow as tf
 from PIL import Image, ImageDraw
 import skimage.filters as filters
+
+import matplotlib.cm as cm
+from matplotlib.colors import Normalize
+from matplotlib.colors import to_hex
+import math
 
 
 """
@@ -161,7 +166,25 @@ def gaussian_blur(img, max_sigma=1.5):
     """
     return filters.gaussian(img,np.random.random()*max_sigma,multichannel=True)*255
 
-def draw_bboxes(img,boxes):
+
+def class_color(class_number, default="#49b8a8", secondary="#EE6434"):
+	"""
+	Picks color to make box
+	"""
+	# if class_number == 18:
+	# 	return default
+
+	if class_number != 18:
+		# cmap = cm.tab20b
+		# norm = Normalize(vmin=16, vmax=95)
+
+		# return to_hex(cmap(norm(class_number)))
+		return secondary
+
+	return default
+
+
+def draw_bboxes(img,boxes,classes=None,width=3):
     """
     A helper function to draw bounding box rectangles on images
 
@@ -176,11 +199,18 @@ def draw_bboxes(img,boxes):
     draw = ImageDraw.Draw(source)
     w2,h2 = (img.shape[0],img.shape[1])
 
+    if classes == None:
+        color = len(boxes) * ["#49b8a8"]
+    else:
+        color = [class_color(c) for c in classes]
+
     idx = 0
+    width = max(int(round(width)),1)
 
     for b in boxes:
         xmin,ymin,xmax,ymax = b
         
-        for j in range(3): #originally range 3
-            draw.rectangle(((xmin-j, ymin-j), (xmax+j, ymax+j)), outline='#49b8a8') #note: original color was red
+        for j in range(width): #originally range 3
+            draw.rectangle(((xmin-j, ymin-j), (xmax+j, ymax+j)), outline=color[idx])#note: original color was red
+        idx += 1
     return source

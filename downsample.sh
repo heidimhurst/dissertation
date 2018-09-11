@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # project variables
-trial=t7
+# define project trial in initial command call (e.g. ./downsample.sh t8) to avoid default being set
+trial=${1:-t7}
 # factor=1.5
 
 id=18 #89 #18: small car; 89: shipping container lot
@@ -10,7 +11,7 @@ prefix=car #or cars or whatever
 
 base_path=/home/uceshhu
 
-project_path=${base_path}/runs/t7_ssd_inception
+project_path=${base_path}/runs/${trial}_ssd_inception
 data_path=${base_path}/xview_data
 personal_util_path=${base_path}/personal_codebase/dissertation
 xview_util_path=${base_path}/xview_codebase/data_utilities
@@ -18,7 +19,10 @@ model_name=/ssd_inception
 
 # scale factors of interest
 # declare -a sf=("1.5" "2.5" "3" "3.5")
-declare -a sf=("3")
+declare -a sf=(1 1.5 2 2.5 3 3.5 4)
+method="mode"
+
+echo "Processing downsampling for ${object_type}-type objects - trial ${trial} using method: ${method}"
 
 # loop through each of these
 for i in ${sf[@]}; do
@@ -29,12 +33,12 @@ for i in ${sf[@]}; do
 	# let user know what's up
 	echo ----------- Creating images for downsample factor $i -----------
 	# create folder for downsampled images
-	mkdir ${data_path}/train_images_${factor}
+	mkdir ${data_path}/train_images_${method}_${factor}
 	# downsample images
 	python ${personal_util_path}/downsample.py \
 	-i ${data_path}/train_images \
-	-o ${data_path}/train_images_${factor} \
-	-r lanczos -s ${factor}
+	-o ${data_path}/train_images_${method}_${factor} \
+	-r ${method} -s ${factor}
 	# create file structure
 	echo ----------- Creating required folders for object $object_type at factor $i -----------
 	interim_path=${project_path}/models${model_name}/${object_type}/${factor}
@@ -49,7 +53,7 @@ for i in ${sf[@]}; do
 	-o ${project_path}/data/${object_type}/${factor}/${prefix}_${trial}_${factor}.geojson
 	# create appropriate config files, modify as needed
 	echo ----------- Creating project config file ${config_path} -----------
-	cp ${project_path}/models${model_name}/t7_template.config ${config_path}
+	cp ${project_path}/models${model_name}/${trial}_template.config ${config_path}
 	# replace train path
 	sed -i "s+{TFR_TRAIN}+\"${project_path}/data/${object_type}/${factor}/xview_train_${trial}_${factor}.record\"+g" ${config_path}
 	# # replace evaluation path
@@ -61,11 +65,11 @@ for i in ${sf[@]}; do
 	# create tfrecord files
 	echo ----------- Creating tfrecord files for factor $i ----------- 
 	# pipe output to a file for processing
-	# make sure you're in teh correct directory
+	# make sure you're in the correct directory
 	cd ${project_data_path}
 	# create tfrecord file and pipe input to save for later processing
 	python ${xview_util_path}/process_wv.py -t .1 -s ${trial}_${factor} \
-	${data_path}/train_images_${factor}/ \
+	${data_path}/train_images_${method}_${factor}/ \
 	${project_data_path}/${prefix}_${trial}_${factor}.geojson 2>&1 | tee ${project_data_path}/processing_output.txt
 	# process information from tf record file 
 	echo ----------- Processing TF Record Output Info -----------

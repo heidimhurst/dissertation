@@ -1,0 +1,11 @@
+
+  0%|          | 0/125 [00:00<?, ?it/s]
+100%|##########| 125/125 [00:00<00:00, 89225.32it/s]
+INFO:root:Res: (300, 300)
+  0%|          | 0/1 [00:00<?, ?it/s]
+100%|##########| 1/1 [00:00<00:00,  1.02it/s]
+INFO:root:Max chips per resolution: 9 
+INFO:root:Tot Box: 26
+INFO:root:Chips: 6
+INFO:root:saved: 6 train chips
+INFO:root:saved: 0 test chips
